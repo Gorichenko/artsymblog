@@ -1,0 +1,57 @@
+version: '3'
+
+services:
+# =========================================
+  nginx:
+    image: nginx:latest
+    container_name: ${COMPOSE_PROJECT_NAME}_nginx
+    ports:
+      - ${COMPOSE_NGINX_PORT}
+    volumes:
+      - ${COMPOSE_WORKDIR}/:/var/www
+      - ${COMPOSE_DOCKERDIR}/nginx/${COMPOSE_NGINX_CONFIG}:/etc/nginx/conf.d/default.conf
+      - ${COMPOSE_DATA}/nginx/:/var/log/nginx
+    links:
+      - mysql
+      - php_fpm
+    networks:
+      - bridge
+# =========================================
+  php_fpm:
+    build: ${COMPOSE_DOCKERDIR}/php_fpm
+    image: ${COMPOSE_PROJECT_NAME}/php_fpm
+    container_name: ${COMPOSE_PROJECT_NAME}_php_fpm
+    environment:
+      - DEVELOPER_HOST=${COMPOSE_XDEBUG_HOST}
+      - DEVELOPER_PORT=${COMPOSE_XDEBUG_PORT}
+    volumes:
+      - ${COMPOSE_WORKDIR}/:/var/www
+      - ${COMPOSE_DATA}/php_fpm/home/www-data/:/home/www-data
+      - ${COMPOSE_DATA}/_temp:/_temp
+    links:
+      - mysql
+    networks:
+      - bridge
+# =========================================
+  mysql:
+    image: mysql:5.7.19
+    container_name: ${COMPOSE_PROJECT_NAME}_mysql
+    volumes:
+      - ${COMPOSE_DATA}/mysql_data/db:/var/lib/mysql
+      - ${COMPOSE_DATA}/_temp:/_temp
+    environment:
+      - MYSQL_DATABASE=${COMPOSE_MYSQL_DATABASE}
+      - MYSQL_USER=${COMPOSE_MYSQL_USER}
+      - MYSQL_PASSWORD=${COMPOSE_MYSQL_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${COMPOSE_MYSQL_ROOT_PASSWORD}
+    ports:
+      - ${COMPOSE_MYSQL_PORT}
+    networks:
+      - bridge
+# =========================================
+networks:
+  bridge:
+    driver: bridge
+    ipam:
+     config:
+       - subnet: ${COMPOSE_NETWORK}
