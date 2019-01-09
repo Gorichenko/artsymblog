@@ -24,6 +24,7 @@ services:
     environment:
       - DEVELOPER_HOST=${COMPOSE_XDEBUG_HOST}
       - DEVELOPER_PORT=${COMPOSE_XDEBUG_PORT}
+      - PHP_IDE_CONFIG=serverName="symfony"
     volumes:
       - ${COMPOSE_WORKDIR}/:/var/www
       - ${COMPOSE_DATA}/php_fpm/home/www-data/:/home/www-data
@@ -32,6 +33,8 @@ services:
       - mysql
     networks:
       - bridge
+    ports:
+      - 3000:3000
 # =========================================
   mysql:
     image: mysql:5.7.19
@@ -48,6 +51,20 @@ services:
       - ${COMPOSE_MYSQL_PORT}
     networks:
       - bridge
+
+# =========================================
+#  cron:
+#    build: ${COMPOSE_DOCKERDIR}/cron
+#    container_name: ${COMPOSE_PROJECT_NAME}_cron
+#    volumes:
+#      - /etc/cron.d
+#      - ${COMPOSE_WORKDIR}/:/var/www
+#      - ${COMPOSE_DATA}/php_fpm/home/www-data/:/home/www-data
+#    depends_on:
+#      - php_fpm
+#    ports:
+#      - 9006:9006
+
 # =========================================
 networks:
   bridge:

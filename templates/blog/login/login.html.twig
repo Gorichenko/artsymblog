@@ -1,0 +1,29 @@
+{% extends 'blog/layout.html.twig' %}
+
+{% block title %}Login{% endblock%}
+
+{% block body %}
+
+    {% if app.request.hasPreviousSession %}
+    {% for flashMessage in app.session.flashbag.get('register-success-notice') %}
+        <div class="success-notice">
+            {{ flashMessage }}
+        </div>
+    {% endfor %}
+
+    {% for flashMessage in app.session.flashbag.get('register-error-notice') %}
+        <div class="error-notice">
+            {{ flashMessage }}
+        </div>
+    {% endfor %}
+    {% endif %}
+
+    <h1 class="login_title">Login</h1>
+    {% include 'blog/login/autorization_form.html.twig' with { 'form': form } %}
+
+    {% block sing_up %}
+    <div class="no_account">
+        <a href="{{ path('app_blog_login_singup') }}"><button class="register_user">Sing up now!</button></a>
+    </div>
+    {% endblock %}
+{% endblock %}

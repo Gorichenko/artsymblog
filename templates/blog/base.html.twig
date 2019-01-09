@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html"; charset=utf-8" />
+    <title>{% block title %}Symblog{% endblock %} - Symblog</title>
+    <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <script
+            src="https://code.jquery.com/jquery-3.3.1.min.js"
+            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+            crossorigin="anonymous"></script>
+    {% block stylesheets %}
+        <link href='http://fonts.googleapis.com/css?family=Irish+Grover' rel='stylesheet' type='text/css'>
+        <link href='http://fonts.googleapis.com/css?family=La+Belle+Aurore' rel='stylesheet' type='text/css'>
+        <link href="{{ asset('web/css/screen.css') }}" type="text/css" rel="stylesheet" />
+    {% endblock %}
+
+    <link rel="shortcut icon" href="{{ asset('favicon.ico') }}" />
+</head>
+<body>
+
+<section id="wrapper">
+    <header id="header">
+        <div class="top">
+            {% include 'blog/navigation.html.twig' %}
+        </div>
+
+        <hgroup>
+            <h2>{% block blog_title %}<a href="{{ path('app_blog_page_index') }}">symblog</a>{% endblock %}</h2>
+            <h3>{% block blog_tagline %}<a href="{{ path('app_blog_page_index') }}">creating a blog in Symfony4</a>{% endblock %}</h3>
+        </hgroup>
+    </header>
+
+    <section class="main-col">
+        {% block body %}{% endblock %}
+    </section>
+    <aside class="sidebar">
+        {% block sidebar %}{% endblock %}
+    </aside>
+
+    <div id="footer">
+
+    </div>
+</section>
+
+{% block javascripts %}
+    {% if app.session.get('user') %}
+        <script src="{{ asset('web/js/message_counter.js') }}"></script>
+    {% endif %}
+{% endblock %}
+</body>
+</html>

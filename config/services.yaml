@@ -5,8 +5,38 @@
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     locale: 'en'
+    app_blog.emails.contact_email: 'gorichenko1990@gmail.com'
+    app_blog.comments.latest_comment_limit: 10
+    app_blog_registration_salt: 'fhT56Po4'
+    app_blog_user_default_image: 'user.jpeg'
+    mailer_transport: gmail
+    mailer_encryption: ssl
+    mailer_auth_mode: login
+    mailer_host: smtp.gmail.com
+    mailer_user: manypany25@gmail.com
+    mailer_password: Ghbkewrfz1992
 
 services:
+    app.entity.chat:
+      class: App\Entity\Chat
+
+    app.entity.chat.users:
+      class: App\Entity\ChatUsers
+
+    app.entity.chat.private:
+      class: App\Entity\PrivateChat
+
+    app.topic.chat:
+      class: App\Service\TopicService
+      arguments: [
+        '@doctrine.orm.entity_manager',
+        '@app.entity.chat',
+        '@app.entity.chat.users',
+        '@app.entity.chat.private',
+        '@session']
+      tags:
+       - { name: gos_web_socket.topic }
+
     # default configuration for services in *this* file
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
@@ -14,6 +44,10 @@ services:
         public: false       # Allows optimizing the container by removing unused services; this also means
                             # fetching services directly from the container via $container->get() won't work.
                             # The best practice is to be explicit about your dependencies anyway.
+#    blog.twig.extension:
+#        class: App\Twig\BlogExtension
+#        tags:
+#        - { name: twig.extension }
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
@@ -27,5 +61,14 @@ services:
         resource: '../src/Controller'
         tags: ['controller.service_arguments']
 
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+gos_web_socket:
+  server:
+    port: 3000        #The port the socket server will listen on
+    host: 0.0.0.0   #The host ip to bind to
+    router:
+        resources:
+        - '%kernel.project_dir%/config/pubsub.yml'

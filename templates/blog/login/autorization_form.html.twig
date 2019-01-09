@@ -1,0 +1,7 @@
+{{ form_start(form, { 'action': path('app_blog_login_autorization'), 'method': 'POST', 'attr': {'class': 'login'} }) }}
+
+    {{ form_widget(form) }}
+<p>
+    <input type="submit" value="Login">
+</p>
+{{ form_end(form) }}

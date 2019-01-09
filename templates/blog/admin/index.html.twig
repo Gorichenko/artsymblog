@@ -1,0 +1,13 @@
+{% extends 'blog/admin/base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('web/css/blog.css') }}" type="text/css" rel="stylesheet" />
+    <link href="{{ asset('web/css/admin.css') }}" type="text/css" rel="stylesheet" />
+    <link href="{{ asset('web/css/sidebar.css') }}" type="text/css" rel="stylesheet" />
+{% endblock %}
+
+
+{% block sidebar %}
+    {{ render(controller('App\\Controller\\Blog\\AdminController:sidebar' ))}}
+{% endblock %}

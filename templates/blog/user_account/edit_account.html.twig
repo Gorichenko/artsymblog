@@ -1,0 +1,41 @@
+{% extends 'blog/layout.html.twig' %}
+
+{% block body %}
+
+    {% if app.request.hasPreviousSession %}
+        {% for flashMessage in app.session.flashbag.get('register-success-notice') %}
+            <div class="success-notice">
+                {{ flashMessage }}
+            </div>
+        {% endfor %}
+
+        {% for flashMessage in app.session.flashbag.get('register-error-notice') %}
+            <div class="error-notice">
+                {{ flashMessage }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="user_image">
+        <img class="user_photo" id="acc_photo" src="{{ asset(['images/user_photo/', app.session.get('user')['image']]|join) }}" alt="User photo">
+    </div>
+
+    <div class="edit_form">
+
+        {{ form_start(form, { 'action': path('app_blog_user_save'), 'method': 'POST', 'attr': {'class': 'edit_account'} }) }}
+
+        {{ form_widget(form) }}
+        <p>
+            <input type="submit" value="Edit">
+        </p>
+        {{ form_end(form) }}
+
+    </div>
+
+{% endblock %}
+
+    {% block javascripts %}
+        <script src="{{ asset('web/js/photo_preview.js') }}"></script>
+    {% endblock %}
+
+

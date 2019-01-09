@@ -1,0 +1,17 @@
+{% extends 'blog/layout.html.twig' %}
+
+{% block title %}Registration{% endblock%}
+
+{% block body %}
+
+    {% if app.request.hasPreviousSession %}
+    {% for flashMessage in app.session.flashbag.get('register-error-notice') %}
+        <div class="error-notice">
+            {{ flashMessage }}
+        </div>
+    {% endfor %}
+    {% endif %}
+
+    <h1 class="registration_title">Registration</h1>
+    {% include 'blog/login/singup_form.html.twig' with { 'form': form } %}
+{% endblock %}

@@ -1,0 +1,9 @@
+app_topic_chat:
+  channel: app/chat/{room}/{chat_id}
+  handler:
+    callback: 'app.topic.chat' #Относится к getName, а не к имени сервиса
+  requirements:
+    room:
+      pattern: "[a-z]+" #accept all valid regex, don't put delimiters !
+    chat_id:
+      pattern: '\d+'

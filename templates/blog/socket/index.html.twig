@@ -1,0 +1,110 @@
+{% extends 'blog/layout.html.twig' %}
+
+{% block title %}Chat{% endblock%}
+
+{% block sidebar %}
+    <div class="chat_users">
+        <div class="title">
+            <h3>Blog users</h3>
+        </div>
+        <div class="now_online">
+            {% for item in online_users %}
+                <a class ='user_link' href="{{ path('app_blog_socket_private', { 'user_id': item.id }) }}">
+                <div class="current_user">
+                       <img class="user_photo" src="{{ asset(['images/user_photo/', item.image]|join) }}" alt="User photo">
+                     <p class="user_name">{{ item.name }}</p>
+                    {% if (item.online == 1) %}
+                        <span class="is_online">online</span>
+                    {% endif %}
+                     <div class="message_counter" data-chat-id="{{ item.chat_id }}"></div>
+                </div>
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block body %}
+
+<h1 class="chat_title">User chat</h1>
+
+    <section class="chat">
+        <div id="cm" class="chat_messages flex-container flex-end">
+        </div>
+        <div class="message_area">
+            <textarea class ='message_field'></textarea>
+            <button class="send_message">Send</button>
+        </div>
+    </section>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="{{ asset('web/js/message_counter.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('web/js/gos_web_socket_client.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('web/js/autobahn.min.js') }}"></script>
+    <script>
+
+        message_counter.get_message_count("{{ path('app_blog_socket_counter') }}", {{ app.session.get('user')['id'] }});
+        message_counter.update_message_count("{{ path('app_blog_socket_counter') }}", {{ app.session.get('user')['id'] }});
+
+        $(document).on('click', '.user_link', function(e){
+            $href = $(this).attr('href');
+            e.preventDefault();
+            var chat_id = $(this).find('.message_counter').attr('data-chat-id');
+            message_counter.update_storage({{ app.session.get('user')['id'] }}, chat_id, "{{ path('app_blog_socket_counter') }}");
+            location.href = $href;
+        });
+
+        var webSocket = WS.connect("ws://0.0.0.0:3000");
+        var send_button = document.querySelector('.send_message');
+
+        webSocket.on("socket/connect", function(session){
+            session.subscribe("app/chat/symblog/0", function(uri, payload){
+                chat.clear_messages();
+                chat.public_messages(payload.msg, payload.top);
+            });
+
+            send_button.addEventListener('click', function () {
+                if ($('.message_field').val().trim() == '') {
+                    $('.message_field').css('border', '3px solid red');
+                    return false;
+                }
+                session.publish("app/chat/symblog/0", {
+                    user_id : {{ app.session.get('user')['id'] }},
+                    message : $('.message_field').val().trim(),
+                });
+                $('.message_field').css('border', '1px solid grey');
+                $('.message_field').val('');
+            })
+        })
+
+        webSocket.on("socket/disconnect", function (error) {
+            //error provides us with some insight into the disconnection: error.reason and error.code
+
+            console.log("Disconnected for " + error.reason + " with code " + error.code);
+        })
+
+        var chat = {
+
+            clear_messages: function() {
+                $('#cm').text('');
+            },
+
+            scroll: function() {
+                $('#cm').animate({scrollTop: 0}, 100);
+            },
+
+            public_messages: function(messages, scroll) {
+                var self = this;
+                $.each(JSON.parse(messages), function(i, item){
+                    if (item['user_id'] == {{ app.session.get('user')['id'] }}) {
+                        $('#cm').prepend("<div id='um'><span>" + item['message'] + "</span></div>")
+                    } else {
+                        $('#cm').prepend("<div id='im'><span>" + item['message'] + "</span></div>")
+                    }
+                    self.scroll();
+                })
+            }
+        }
+    </script>
+{% endblock %}

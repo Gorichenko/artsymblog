@@ -1,0 +1,18 @@
+{% block navigation %}
+    <nav>
+        <ul class="navigation">
+            {% if app.session.get('user') %}
+                <li><a href="{{ path('app_blog_admin_add') }}">Admin</a></li>
+                <li><a href="{{ path('app_blog_user_account') }}">My account</a></li>
+                <li><a href="{{ path('app_blog_login_logout') }}">Logout</a></li>
+                <li><a href="{{ path('app_blog_socket_chat') }}">Chat</a></li>
+            {% endif %}
+            {% if not app.session.get('user') %}
+                <li><a href="{{ path('app_blog_login_login') }}">Login</a></li>
+            {% endif %}
+            <li><a href="{{ path('app_blog_page_index') }}">Home</a></li>
+            <li><a href="{{ path('app_blog_page_about') }}">About</a></li>
+            <li><a href="{{ path('app_blog_page_contact') }}">Contact</a></li>
+        </ul>
+    </nav>
+{% endblock %}

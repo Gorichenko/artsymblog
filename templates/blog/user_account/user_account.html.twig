@@ -1,0 +1,27 @@
+{% extends 'blog/layout.html.twig' %}
+
+{% block title %}My account{% endblock%}
+
+{% block body %}
+
+    {% if app.request.hasPreviousSession %}
+        {% for flashMessage in app.session.flashbag.get('register-success-notice') %}
+            <div class="success-notice">
+                {{ flashMessage }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="account">
+        <div class="photo">
+            <img class="user_photo" src="{{ asset(['images/user_photo/', app.session.get('user')['image']]|join) }}" alt="User photo">
+            <a href="{{ path('app_blog_user_edit') }}"><button class="edit">Edit account</button></a>
+        </div>
+        <div class="user_info">
+            <p><span class="user_attr">Name: </span>{{ app.session.get('user')['name'] }}</p>
+            <p><span class="user_attr">Surname: </span> {{ app.session.get('user')['surname'] }}</p>
+            <p><span class="user_attr">Email: </span> {{ app.session.get('user')['email'] }}</p>
+        </div>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,28 @@
+.manage_articles {text-align: center; border-left: 1px solid #ccc}
+.admin_buttons li {padding: 5px; margin:10px; font-family: 'Irish Grover', cursive; font-size: 30px; text-align: center; }
+.admin_buttons li:nth-child(1){ border-bottom: 1px solid #aaa;}
+.admin_buttons a li {color:black;}
+.main-col {
+    width: 700px;
+    display: inline-block;
+    float: left;
+    border-right: none;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+.article_title {
+    margin: 10px;
+    padding: 15px;
+    border-bottom: 1px solid #ccc;
+}
+.article_title .title {
+    font-weight: bold;
+}
+.delete_button {float:right; padding:10px; border-radius: 8px; color:white; font-weight: bold; background: green;
+    margin-top: -20px;}
+form.add_article label {float: left; margin-top:20px; margin-right: 10px; text-align: right; width: 100px; font-weight: bold; vertical-align: top; padding-top: 10px; color:grey;}
+form.add_article input[type="submit"]  { margin-left: 110px; margin-top:20px; width: 250px; line-height: 26px; font-size: 20px; min-height: 26px; }
+form.add_article input[type="text"],
+form.add_article textarea,
+form.add_article input[type="file"]
+{ width: 250px; line-height: 26px; font-size: 20px; min-height: 26px; margin-top:20px;}

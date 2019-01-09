@@ -1,0 +1,43 @@
+{% extends 'blog/admin/index.html.twig' %}
+{% block body %}
+<section class="blog_titles">
+    <ol>
+        {% for blog in blogs %}
+            <li class="article_title">
+                <a href="{{ path('app_blog_blog_show', { 'id': blog.id }) }}"><span class="title">{{ blog.title }}</span></a>
+                 <button id="{{ blog.id }}" class="delete_button">Delete</button>
+            </li>
+        {% endfor %}
+    </ol>
+</section>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        window.onload = function() {
+            $('.delete_button').on('click', function () {
+                var self = $(this);
+                $.ajax({
+                    type: "POST",
+                    url: "{{ path('app_blog_admin_delete') }}",
+                    dataType:   'json',
+                    data: {'id': self.attr('id')},
+                    success: function (data) {
+                        if (data.status == 200) {
+                           self.html("<span class='title'>Deleted</span>");
+                           self.css({
+                               'background-color':'orange',
+                               'opacity':'0.4'
+                           });
+                           self.attr('disabled', true);
+                        } else {
+                            self.html("<span class='title'>Error. Try Again</span>");
+                            self.css('background-color', 'red');
+                        }
+                    }
+                })
+            })
+        }
+    </script>
+{% endblock %}
