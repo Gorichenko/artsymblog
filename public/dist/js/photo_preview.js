@@ -1,0 +1,1 @@
+function readURL(e){if(e.files&&e.files[0]){var a=new FileReader;a.onload=function(e){$("#acc_photo").attr("src",e.target.result)},a.readAsDataURL(e.files[0])}}$(document).on("change","#app_edit_account_file",function(){readURL(this)});

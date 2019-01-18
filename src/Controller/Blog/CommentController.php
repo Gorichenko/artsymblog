@@ -8,6 +8,8 @@ use App\Form\Blog\CommentType;
 use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use PhpAmqpLib\Connection\AMQPStreamConnection;
+use PhpAmqpLib\Message\AMQPMessage;
 
 /**
  * Comment controller.
@@ -15,10 +17,12 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 class CommentController extends Controller
 {
     protected $session;
+    protected $commentType;
 
-    public function __construct(SessionInterface $session)
+    public function __construct(SessionInterface $session, CommentType $commentType)
     {
         $this->session = $session;
+        $this->commentType = $commentType;
     }
 
     /**
@@ -62,10 +66,27 @@ class CommentController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $em = $this->getDoctrine()
-                ->getManager();
-            $em->persist($comment);
-            $em->flush();
+            /*
+             * Реализация добавления комментариев через очереди
+             * для активации php bin/console app:getcomment
+             *
+             * */
+            $request->request->get($this->commentType->getBlockPrefix());
+            $queue_comment = [];
+
+            if (isset($request->request->get($this->commentType->getBlockPrefix())['user'])) {
+                $queue_comment['user'] = $request->request->get($this->commentType->getBlockPrefix())['user'];
+            } else {
+                $queue_comment['user'] = $this->session->get('user')['name'];
+            }
+            $queue_comment['comment'] = $request->request->get($this->commentType->getBlockPrefix())['comment'];
+            $queue_comment['blog_id'] = $blog_id;
+
+            $connection = new AMQPStreamConnection("rabbit1", 5672, 'rabbitmq', 'rabbitmq');
+            $channel = $connection->channel();
+            $channel->queue_declare('comment_queue', false,false, false, false);
+            $msg = new AMQPMessage(serialize($queue_comment));
+            $channel->basic_publish($msg, '', 'comment_queue');
 
             return $this->redirect($this->generateUrl('app_blog_blog_show', array(
                     'id' => $comment->getBlog()->getId())) .

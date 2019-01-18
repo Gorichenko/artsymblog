@@ -1,0 +1,29 @@
+{
+  "name": "artsymblog",
+  "version": "1.0.0",
+  "description": "```bash cd s4lab_project git clone git@bitbucket.org:corvet/s4lab_20180101_docker_symfony.git ./ git remote remove origin sudo chmod -R 777 ./ cd docker_symfony/ docker-compose down docker-compose up -d --build docker exec -it s4lab_php_fpm bash composer install ``` ## Setup connection for database file __.env__ ```bash DATABASE_URL=mysql://db_user:db_password@mysql:3306/db_name ```",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "gulp": "^3.9.0",
+    "gulp-clean-css": "^4.0.0",
+    "gulp-js-minify": "0.0.3",
+    "gulp-sass": "^4.0.2",
+    "gulp-uglify": "^3.0.1",
+    "gulp-watch": "^5.0.1"
+  },
+  "scripts": {
+    "gulp": "gulp",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@bitbucket.org/corvet/s4lab_20180101_docker_symfony.git"
+  },
+  "author": "Jack",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/corvet/s4lab_20180101_docker_symfony#readme"
+}

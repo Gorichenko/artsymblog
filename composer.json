@@ -17,12 +17,13 @@
         "ext-iconv": "*",
         "api-platform/api-pack": "^1.1",
         "blogbundle/blogbundle": "4.0.0",
-        "leezy/pheanstalk-bundle": "3.3.0",
         "doctrine/data-fixtures": "dev-master",
         "doctrine/doctrine-fixtures-bundle": "dev-master",
         "doctrine/doctrine-migrations-bundle": "dev-master",
         "doctrine/migrations": "dev-master",
         "gos/web-socket-bundle": "^1.8",
+        "php-amqplib/php-amqplib": "^2.8",
+        "php-amqplib/rabbitmq-bundle": "^1.14",
         "phpquery/phpquery": "^0.0.1",
         "phpunit/phpunit": "5.7.26",
         "sensio/framework-extra-bundle": "^5.2",
@@ -47,7 +48,8 @@
         "symfony/validator": "*",
         "symfony/web-link": "*",
         "symfony/yaml": "*",
-        "twig/extensions": "^1.5"
+        "twig/extensions": "^1.5",
+        "elasticsearch/elasticsearch": "~6.0"
     },
     "require-dev": {
         "symfony/debug-pack": "*",

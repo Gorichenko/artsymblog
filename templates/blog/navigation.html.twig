@@ -13,6 +13,74 @@
             <li><a href="{{ path('app_blog_page_index') }}">Home</a></li>
             <li><a href="{{ path('app_blog_page_about') }}">About</a></li>
             <li><a href="{{ path('app_blog_page_contact') }}">Contact</a></li>
+            <li class="find_art"><a href="#">Find Article</a></li>
         </ul>
     </nav>
+    <div class="fixed-overlay fixed-overlay__modal">
+        <div class="modal">
+            <div class="modal_container">
+                <div class="art_searcher">
+                    <span class="close_modal">X</span>
+                    <input type="text" class="input_field">
+                    <button class="find_me">Search</button>
+                    <div class="art_wrapper"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+            crossorigin="anonymous"></script>
+    <script>
+        window.onload = function () {
+
+            var find_button = document.querySelector('.find_art');
+            var modal = document.querySelector('.fixed-overlay');
+            var close_modal = document.querySelector('.close_modal');
+            var find_me = document.querySelector('.find_me');
+
+            find_button.addEventListener('click', function (e) {
+                e.preventDefault();
+                modal.style.display = 'block';
+            })
+
+            close_modal.addEventListener('click', function () {
+                modal.style.display = 'none';
+            })
+
+            find_me.addEventListener('click', function () {
+                var input_field = document.querySelector('.input_field');
+                if ($('.input_field').val().trim() == '') {
+                    $('.input_field').css('border', '3px solid red');
+                } else {
+                    $('.input_field').css('border', '1px solid black');
+
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ path('app_blog_blog_find') }}",
+                        dataType:   'json',
+                        data: {'query': $('.input_field').val()},
+                        success: function (data) {
+                            $(".art_wrapper").html('');
+                            var articles = data.hits;
+                            if (articles.total == 0) {
+                                $(".art_wrapper").append("<p class='art_clean'> По Вашему запросу ничего не найдено </p>")
+                            } else {
+                                $.each(articles.hits, function(i, item){
+                                    var url = "{{ path('app_blog_blog_show', { 'id': '1' }) }}";
+                                    url = url.replace("1", item._id);
+                                    $(".art_wrapper").append("<a class='article_add_link' href=" + url +">" + item._source.title + "</a>");
+                                })
+                            }
+                        }
+                    })
+                }
+
+            })
+
+        }
+    </script>
 {% endblock %}

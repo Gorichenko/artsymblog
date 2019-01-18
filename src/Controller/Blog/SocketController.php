@@ -36,6 +36,17 @@ class SocketController extends Controller
 
         foreach ($online_users as &$item) {
            $result = $em->getRepository('App\Entity\ChatUsers')->isChatExists($this->session->get('user')['id'], $item['id']);
+
+           if (!$result) {
+               $chatUsers = new ChatUsers();
+               $chatUsers->setUserFrom($this->session->get('user')['id']);
+               $chatUsers->setUserTo($item['id']);
+               $em->persist($chatUsers);
+               $em->flush();
+           }
+
+            $result = $em->getRepository('App\Entity\ChatUsers')->isChatExists($this->session->get('user')['id'], $item['id']);
+
             $item['chat_id'] = $result[0]['id'];
         }
 

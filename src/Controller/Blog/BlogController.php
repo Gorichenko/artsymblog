@@ -2,11 +2,15 @@
 
 namespace App\Controller\Blog;
 
+use http\Env\Request;
+use Symfony\Component\HttpFoundation\Request as HttpRequest;
 use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Elasticsearch\ClientBuilder;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class BlogController extends Controller
 {
@@ -33,5 +37,39 @@ class BlogController extends Controller
             'blog'      => $blog,
             'comments' => $comments
         ));
+    }
+
+    /**
+     * @Route("/article/find"),
+     * methods={"GET"},
+     * name="app_blog_blog_find",
+     */
+    public function find(HttpRequest $request)
+    {
+        if ($request->isXmlHttpRequest() && $request->getMethod() == 'POST') {
+            try {
+                $client = ClientBuilder::create()
+                    ->setHosts(['elasticsearch'])
+                    ->build();
+
+                $params = [
+                    'index' => 'blog',
+                    'type' => 'article',
+                    'body' => [
+                        'query' => [
+                            'match' => [
+                                'text' => $request->get('query')
+                            ]
+                        ]
+                    ]
+                ];
+
+                $response = $client->search($params);
+                return new JsonResponse($response);
+
+            } catch(\Exception $e) {
+                return new JsonResponse($e->getMessage());
+            }
+        }
     }
 }

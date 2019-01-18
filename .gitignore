@@ -20,3 +20,5 @@
 ###> phpunit/phpunit ###
 /phpunit.xml
 ###< phpunit/phpunit ###
+/node_modules
+/bin/.phpunit

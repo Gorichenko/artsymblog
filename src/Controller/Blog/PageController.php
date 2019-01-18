@@ -47,30 +47,7 @@ class PageController extends Controller
      */
     public function about()
     {
-        $pheanstalk = $this->get("leezy.pheanstalk");
-
-        // ----------------------------------------
-        // producer (queues jobs)
-
-        $pheanstalk
-            ->useTube('testtube')
-            ->put("job payload goes here\n");
-
-        // ----------------------------------------
-        // worker (performs jobs)
-
-        $job = $pheanstalk
-            ->watch('testtube')
-            ->ignore('default')
-            ->reserve();
-
-        echo $job->getData();
-
-        $pheanstalk->delete($job);
-
-        return $this->render('blog/about.html.twig', array(
-            'queue' => 'hello'
-        ));
+        return $this->render('blog/about.html.twig');
     }
 
     /**

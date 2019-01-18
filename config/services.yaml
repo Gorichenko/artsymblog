@@ -17,6 +17,13 @@ parameters:
     mailer_password: Ghbkewrfz1992
 
 services:
+
+#    app.command.set_article:
+#      class: App\Command\ElasticSetCommand
+#      arguments: [
+#        '@doctrine.orm.entity_manager'
+#      ]
+
     app.entity.chat:
       class: App\Entity\Chat
 
@@ -25,6 +32,9 @@ services:
 
     app.entity.chat.private:
       class: App\Entity\PrivateChat
+
+    app.consumer.mail_sender:
+      class: App\Service\RabbitService
 
     app.topic.chat:
       class: App\Service\TopicService
@@ -72,3 +82,29 @@ gos_web_socket:
     router:
         resources:
         - '%kernel.project_dir%/config/pubsub.yml'
+
+old_sound_rabbit_mq:
+  connections:
+    default:
+      host:     'rabbit1'
+      port:     5672
+      user:     'rabbitmq'
+      password: 'rabbitmq'
+      vhost:    '/'
+      lazy:     false
+      connection_timeout: 3
+      read_write_timeout: 3
+      keepalive: false
+      heartbeat: 0
+      use_socket: true
+  producers:
+    send_email:
+      connection:       default
+      exchange_options: { name: 'notification.v1.send_email', type: direct }
+
+  consumers:
+    send_email:
+      connection:       default
+      exchange_options: { name: 'notification.v1.send_email', type: direct }
+      queue_options:    { name: 'notification.v1.send_email' }
+      callback:         app.consumer.mail_sender
