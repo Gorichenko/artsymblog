@@ -1,0 +1,50 @@
+image: docker
+
+services:
+- docker:dind
+
+stages:
+- build
+- test
+
+variables:
+  DOCKER_DRIVER: overlay2
+  DOCKER_IMAGE_SOURCE: $CI_REGISTRY/$CI_PROJECT_PATH
+
+cache:
+  paths:
+  - vendor/
+  - node_modules/
+
+build:app:
+  stage: build
+  before_script:
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+  script:
+  - docker pull $DOCKER_IMAGE_SOURCE/app:latest || true
+  - docker build --cache-from $DOCKER_IMAGE_SOURCE/app:latest
+    -t "$DOCKER_IMAGE_SOURCE/app:latest"
+    docker/app
+  - docker push $DOCKER_IMAGE_SOURCE/app
+  tags:
+  - dind
+
+test:app:
+  stage: test
+  image: $DOCKER_IMAGE_SOURCE/app:latest
+  variables:
+    COMPOSE_MYSQL_USER: db_user
+    COMPOSE_MYSQL_PASSWORD: db_password
+  services:
+  - mysql:5.7.19
+  before_script:
+  - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+  - php composer-setup.php
+  - php -r "unlink('composer-setup.php');"
+  - php composer.phar install
+  script:
+  - composer validate
+  - vendor/bin/phpunit
+  - bin/console doctrine:schema:validate
+  - bin/console lint:twig templates
+  - bin/console lint:yaml config

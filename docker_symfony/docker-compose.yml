@@ -53,54 +53,54 @@ services:
 #    networks:
 #      - bridge
 
-# =========================================
-  rabbit1:
-    image: "rabbitmq:3-management"
-    hostname: "rabbit1"
-    environment:
-      RABBITMQ_ERLANG_COOKIE: "SWQOKODSQALRPCLNMEQG"
-      RABBITMQ_DEFAULT_USER: "rabbitmq"
-      RABBITMQ_DEFAULT_PASS: "rabbitmq"
-      RABBITMQ_DEFAULT_VHOST: "/"
-    ports:
-    - "15672:15672"
-    - "5672:5672"
-    labels:
-      NAME: "rabbitmq1"
-    volumes:
-    - ${COMPOSE_DATA}/enabled_plugins:/var/lib/rabbitmq
-
-# =========================================
-
-  elasticsearch:
-    image: 'docker.elastic.co/elasticsearch/elasticsearch:6.2.3'
-    container_name: elasticsearch
-    environment:
-      - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - discovery.type=single-node
-    volumes:
-    - ./es/data:/usr/share/elasticsearch/data
-    - ./es/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
-    ports:
-      - "9300:9300"
-      - "9200:9200"
-
-# =========================================
-
-  kibana:
-    image: 'docker.elastic.co/kibana/kibana:6.2.3'
-    container_name: kibana
-    links:
-    - elasticsearch
+## =========================================
+#  rabbit1:
+#    image: "rabbitmq:3-management"
+#    hostname: "rabbit1"
 #    environment:
-#      SERVER_NAME: kibana.local
-#      ELASTICSEARCH_URL: http://0.0.0.0:9200
-    volumes:
-    - ./kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml
-    ports:
-    - '5601:5601'
-
-# =========================================
+#      RABBITMQ_ERLANG_COOKIE: "SWQOKODSQALRPCLNMEQG"
+#      RABBITMQ_DEFAULT_USER: "rabbitmq"
+#      RABBITMQ_DEFAULT_PASS: "rabbitmq"
+#      RABBITMQ_DEFAULT_VHOST: "/"
+#    ports:
+#    - "15672:15672"
+#    - "5672:5672"
+#    labels:
+#      NAME: "rabbitmq1"
+#    volumes:
+#    - ${COMPOSE_DATA}/enabled_plugins:/var/lib/rabbitmq
+#
+## =========================================
+#
+#  elasticsearch:
+#    image: 'docker.elastic.co/elasticsearch/elasticsearch:6.2.3'
+#    container_name: elasticsearch
+#    environment:
+#      - bootstrap.memory_lock=true
+#      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+#      - discovery.type=single-node
+#    volumes:
+#    - ./es/data:/usr/share/elasticsearch/data
+#    - ./es/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+#    ports:
+#      - "9300:9300"
+#      - "9200:9200"
+#
+## =========================================
+#
+#  kibana:
+#    image: 'docker.elastic.co/kibana/kibana:6.2.3'
+#    container_name: kibana
+#    links:
+#    - elasticsearch
+##    environment:
+##      SERVER_NAME: kibana.local
+##      ELASTICSEARCH_URL: http://0.0.0.0:9200
+#    volumes:
+#    - ./kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml
+#    ports:
+#    - '5601:5601'
+#
+## =========================================
 
 

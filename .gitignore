@@ -21,4 +21,4 @@
 /phpunit.xml
 ###< phpunit/phpunit ###
 /node_modules
-/bin/.phpunit
+/docker_symfony/es/data
